@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link
+      href="https://fonts.googleapis.com/css2?family=New+Amsterdam&family=Russo+One&family=VT323&display=swap"
+      rel="stylesheet"
+    />
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Text Adventure</title>
+    <style>
+      /* Center the text display and options vertically and horizontally */
+
+      @font-face {
+        font-family: "AtariFont";
+        src: url("./fonts/AtariClassic-gry3.ttf") format("truetype");
+        font-weight: normal;
+        font-style: normal;
+      }
+
+      body {
+        font-family: "AtariFont", monospace;
+        font-weight: 100;
+        margin: 0;
+        padding: 0;
+        background-color: #000000;
+        text-align: center;
+        height: 100vh; /* Full viewport height */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Center the text box and buttons within the container */
+      }
+
+      #text-display {
+        white-space: pre-wrap;
+        text-align: left;
+        margin-bottom: 20px;
+        margin-top: 20px;
+        font-size: 20px;
+        color: rgb(0, 172, 14);
+        padding: 20px;
+        width: 500px; /* Set a fixed width for the text box */
+        height: 350px;
+        background-color: #05050c;
+        border: 2px solid #333;
+        border-radius: 10px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        display: block;
+      }
+
+      #options {
+        display: flex;
+        flex-direction: row;
+        justify-content: center; /* Center buttons horizontally */
+      }
+
+      #option1,
+      #option2,
+      #option3 {
+        margin-bottom: 10px; /* Adjust spacing between the first three buttons */
+      }
+
+      #replay button {
+        width: 150px; /* Decrease the width */
+        height: 50px; /* Decrease the height */
+        padding: 5px 10px; /* Adjust padding for a smaller button */
+        font-size: 16px; /* Reduce the font size */
+        font-weight: normal; /* Adjust font weight if needed */
+      }
+
+      button {
+        padding: 10px 20px;
+        width: 150px;
+        height: 130px;
+        margin: 10px;
+        font-family: "New Amsterdam", serif;
+        font-size: 20px;
+        font-weight: bolder;
+        border: 3px solid #333;
+        border-radius: 5px;
+        background-color: #05050c;
+        color: rgb(117, 160, 153);
+      }
+
+      button:hover {
+        background-color: #0f0f22; /* Optional: Darken the button on hover */
+        cursor: pointer !important; /* Show a "not-allowed" cursor */
+      }
+
+      button.disabled {
+        cursor: not-allowed !important; /* Show a "not-allowed" cursor */
+        opacity: 0.5; /* Make the button faint */
+        background-color: #22202b; /* Darker background to indicate disabled state */
+        color: #888; /* Lighter text color */
+        border-color: #888; /* Grey border to match the background */
+      }
+
+      #start-page {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        background: url("./images/download.png") no-repeat center center fixed;
+        background-size: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+
+      #start-page h1 {
+        font-family: "AtariFont", monospace; /* Change to your desired font-family */
+        font-size: 80px; /* Adjust the font size as needed */
+        color: #ffffff; /* Change text color */
+        text-shadow: 3px 3px 6px rgb(0, 0, 0); /* Optional: Add shadow for better readability */
+        margin-top: 75px; /* Remove default margin */
+        padding: 0; /* Remove default padding */
+        position: relative; /* Allows for more precise positioning if needed */
+      }
+
+      #start-button {
+        margin-top: 300px; /* Adjust spacing from the title or image if needed */
+        margin-left: 700px;
+      }
+
+      #start-page img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 20px auto;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Start Page -->
+    <div id="start-page" class="page" style="display: block">
+      <h1>SALYUT-7</h1>
+      <button id="start-button">Start Game</button>
+    </div>
+
+    <!-- Game Page -->
+
+    <div class="container">
+      <div id="game-page" class="page" style="display: none">
+        <div id="text-display" class="text-display"></div>
+        <div id="options" class="options">
+          <button id="option1" onclick="chooseOption(1)"></button>
+          <button id="option2" onclick="chooseOption(2)"></button>
+          <button id="option3" onclick="chooseOption(3)"></button>
+        </div>
+        <div id="replay" class="replay">
+          <button id="option4" onclick="chooseOption(4)">
+            replay last message
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
