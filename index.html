@@ -38,13 +38,12 @@
         align-items: center; /* Center the text box and buttons within the container */
       }
 
+      /* Styles for the text box */
       #text-display {
         white-space: pre-wrap;
         text-align: left;
         margin-bottom: 20px;
         margin-top: 20px;
-        font-size: 20px;
-        color: rgb(0, 172, 14);
         padding: 20px;
         width: 500px; /* Set a fixed width for the text box */
         height: 350px;
@@ -52,6 +51,14 @@
         border: 2px solid #333;
         border-radius: 10px;
         box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        display: block;
+      }
+
+      /* Styles for the text inside the text box */
+      #text-display span {
+        font-size: 20px;
+        color: rgb(0, 172, 14);
+        line-height: 30px;
         display: block;
       }
 
@@ -134,6 +141,19 @@
         height: auto;
         display: block;
         margin: 20px auto;
+      }
+
+      .fade-out-text {
+        animation: fadeOut 7s forwards; /* 8s to match the duration in JS */
+      }
+
+      @keyframes fadeOut {
+        0% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+        }
       }
     </style>
   </head>

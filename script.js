@@ -9,6 +9,7 @@ const option4 = document.getElementById("option4");
 
 // Game state tracker
 let gameState = 0;
+let typingSpeed = 10;
 let previousGameState = null;
 let nameKnown = false;
 const inventory = [];
@@ -18,7 +19,11 @@ const spaceAmbientSound = new Audio(
   "sounds/spaceship-ambience-with-effects-21420.mp3"
 );
 const typingSound = new Audio("sounds/keyboard-typing-5997.mp3");
-typingSound.volume = 0.2; // Adjust volume if needed
+typingSound.volume = 0.4; // Adjust volume if needed
+const ominousTitle = new Audio("sounds/ominousTitle.mp3");
+ominousTitle.volume = 0.6;
+const ominousTitleTrail = new Audio("sounds/ominousTitleTrail.mp3");
+ominousTitleTrail.volume = 0.4;
 
 function startAmbience() {
   spaceAmbientSound.loop = true; // Make the music loop
@@ -44,21 +49,52 @@ function typeText(sentences, delays, callback) {
   function typeSentence() {
     if (index < sentences.length) {
       const sentence = sentences[index];
-      textDisplay.textContent = ""; // Clear previous text
+
+      // Ensure we're working with the span inside the text-display
+      let textElement = textDisplay.querySelector("span");
+      if (!textElement) {
+        textElement = document.createElement("span"); // Create a span element
+        textDisplay.appendChild(textElement); // Append the span to the text box
+      }
+
+      textElement.textContent = ""; // Clear previous text
 
       let charIndex = 0;
       function typing() {
         if (charIndex < sentence.length) {
-          textDisplay.textContent += sentence.charAt(charIndex);
+          textElement.textContent += sentence.charAt(charIndex);
           charIndex++;
           typingSound.play();
-          setTimeout(typing, 70); // Adjust typing speed here
+          setTimeout(typing, typingSpeed); // Adjust typing speed here
         } else {
           index++;
           const delay = delays[index - 1] || 1000; // Use delay from array or default
           typingSound.pause();
           typingSound.currentTime = 0; // Reset the playback position to the start
-          setTimeout(typeSentence, delay);
+
+          if (sentence === "SALYUT-7") {
+            ominousTitle.play();
+            setTimeout(() => {
+              ominousTitleTrail.play();
+            }, 2500);
+            setTimeout(() => {
+              ominousTitleTrail.volume = 2.5;
+              ominousTitleTrail.play();
+            }, 5000);
+            // Add a delay before starting the fade-out effect
+            setTimeout(() => {
+              // Apply fade-out effect if the sentence is "SALYUT-7"
+              textElement.classList.add("fade-out-text");
+
+              setTimeout(() => {
+                textElement.textContent = ""; // Clear the text after fade-out
+                textElement.classList.remove("fade-out-text"); // Remove fade-out class
+                setTimeout(typeSentence, delay); // Proceed with the next sentence
+              }, 7000); // Duration for fade-out effect
+            }, 5000); // Delay before starting the fade-out effect
+          } else {
+            setTimeout(typeSentence, delay);
+          }
         }
       }
       typing();
@@ -95,51 +131,45 @@ function chooseOption(option) {
           [
             "",
             "14th May 1982",
-            "You are Andrei Berezkinov, a Soviet cosmonaut. \n\nAlong with your crewmate, Valente Lebedevsky, you are the first team to man the Soviet space station...",
-            "SALYUT-7",
+            "You are Andrei Berezkinov, a Soviet cosmonaut. \n\nAlong with your crewmate, Valente Lebedevsky, you are part of the first team to man the Soviet space station...",
           ],
-          [2500, 2000, 2500],
+          [2500, 2000, 3000],
           () => {
-            gameState = 1;
-            updateOptions();
-            enableButtons(); // Re-enable buttons after text is done
+            typingSound.pause();
+            typingSpeed = 0;
+            setFontSize(60);
+            typeText(["", "SALYUT-7"], [2000, 1000], () => {
+              setFontSize(20);
+              typingSpeed = 10;
+              typeText(
+                [
+                  "Your mission is to activate this new space station, conduct various biological studies, and use the station's instruments to observe astronomical phenomena.",
+                  "Having docked with SALYUT-7 three days ago, on 13th May 1982, you and Lebedevsky have just finished bringing the station fully online, initializing its life support systems, communications, power systems, and scientific equipment.",
+                  "You are now required to conduct a comprehensive series of inspections and checks to ensure that all systems are functioning correctly and that the station is ready for long-term habitation and operations.",
+                  "Are you up to the job?",
+                ],
+                [3000, 3000, 3000, 2500],
+                () => {
+                  gameState = 1;
+                  updateOptions();
+                  enable2();
+                  //enableButtons(); // Re-enable buttons after text is done
+                }
+              );
+            });
           }
         );
-      } else if (option === 2) {
-        typeText("is there anyone there?      Can you hear me?", () => {
-          gameState = 1;
-          updateOptions();
-          enableButtons(); // Re-enable buttons after text is done
-        });
-      } else if (option === 3) {
-        typeText("11111111111111111111111111?", () => {
-          gameState = 1;
-          nameKnown = true;
-          updateOptions();
-          enableButtons(); // Re-enable buttons after text is done
-        });
       }
       break;
 
     case 1:
       disableButtons(); // Ensure buttons are disabled
-      if (option === 1) {
-        typeText(
-          ["hello", "how are you?", "I am jolly", "good day!"],
-          [1000, 2000, 3000],
-          () => {
-            gameState = 2; // Move to the next state
-            updateOptions();
-            enableButtons(); // Re-enable buttons after text is done
-          }
-        );
-      } else if (option === 2) {
-        typeText("wha r u gae?", () => {
-          enableButtons(); // Re-enable buttons after text is done
-        });
-      } else {
-        typeText("2222222222222", () => {
-          nameKnown = true;
+      if (option === 2) {
+        changeBackground("images/inside.png");
+        typingSpeed = 50; // Set a reasonable typing speed
+        typeText(["wha r u gae?"], [0], () => {
+          gameState = 2;
+          updateOptions();
           enableButtons(); // Re-enable buttons after text is done
         });
       }
@@ -175,9 +205,9 @@ function chooseOption(option) {
 function updateOptions() {
   switch (gameState) {
     case 1:
-      option1.innerText = "Open the chest";
-      option2.innerText = "Talk to the figure";
-      option3.innerText = "Run away";
+      option1.innerText = "";
+      option2.innerText = "Commencing Full Inspection";
+      option3.innerText = "";
       break;
 
     case 2:
@@ -197,11 +227,28 @@ function disableButtons() {
   option4.classList.add("disabled"); // Ensure replay button is also disabled
 }
 
+function enable2() {
+  option2.classList.remove("disabled");
+  option4.classList.remove("disabled");
+}
+
 function enableButtons() {
   option1.classList.remove("disabled");
   option2.classList.remove("disabled");
   option3.classList.remove("disabled");
   option4.classList.remove("disabled"); // Ensure replay button is enabled
+}
+
+function setFontSize(size) {
+  // Ensure the span exists inside the textDisplay
+  let textElement = textDisplay.querySelector("span");
+  if (textElement) {
+    textElement.style.fontSize = size + "px";
+  }
+}
+
+function changeBackground(imageUrl) {
+  document.body.style.backgroundImage = `url('${imageUrl}')`;
 }
 
 startButton.addEventListener("click", startGame);
