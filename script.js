@@ -8,9 +8,11 @@ const option3 = document.getElementById("option3");
 const option4 = document.getElementById("option4");
 
 // Game state tracker
-let gameState = 0;
+
+let gameState = 1;
 let typingSpeed = 10;
 let previousGameState = null;
+let lastOptionPicked = 0;
 let nameKnown = false;
 const inventory = [];
 let isTyping = false; // Flag to prevent interaction during typing
@@ -19,25 +21,27 @@ const spaceAmbientSound = new Audio(
   "sounds/spaceship-ambience-with-effects-21420.mp3"
 );
 const typingSound = new Audio("sounds/keyboard-typing-5997.mp3");
-typingSound.volume = 0.4; // Adjust volume if needed
+typingSound.volume = 0.25; // Adjust volume if needed
 const ominousTitle = new Audio("sounds/ominousTitle.mp3");
-ominousTitle.volume = 0.6;
+ominousTitle.volume = 0.4;
 const ominousTitleTrail = new Audio("sounds/ominousTitleTrail.mp3");
-ominousTitleTrail.volume = 0.4;
+ominousTitleTrail.volume = 0.2;
+const ominousTitleTrail2 = new Audio(
+  "sounds/the-appearance-of-a-mysterious-creature-143028.mp3"
+);
+ominousTitleTrail2.volume = 0.05;
 
 function startAmbience() {
   spaceAmbientSound.loop = true; // Make the music loop
-  spaceAmbientSound.volume = 0.6; // Adjust volume if needed
-  spaceAmbientSound.play().catch((error) => {
-    console.log("Failed to play music:", error);
-  });
+  spaceAmbientSound.volume = 0.75; // Adjust volume if needed
+  spaceAmbientSound.play();
 }
 
 function startGame() {
   startPage.style.display = "none";
   gamePage.style.display = "block"; // Show the game page
   startAmbience();
-  chooseOption(1); // Start the game by choosing the first option
+  chooseOption(2); // Start the game by choosing the first option
 }
 
 function typeText(sentences, delays, callback) {
@@ -76,11 +80,10 @@ function typeText(sentences, delays, callback) {
             ominousTitle.play();
             setTimeout(() => {
               ominousTitleTrail.play();
-            }, 2500);
+            }, 2750);
             setTimeout(() => {
-              ominousTitleTrail.volume = 2.5;
-              ominousTitleTrail.play();
-            }, 5000);
+              ominousTitleTrail2.play();
+            }, 5500);
             // Add a delay before starting the fade-out effect
             setTimeout(() => {
               // Apply fade-out effect if the sentence is "SALYUT-7"
@@ -115,7 +118,7 @@ function chooseOption(option) {
       gameState = previousGameState; // Restore previous state
       previousGameState = null; // Clear previous game state after restoring
       updateOptions(); // Ensure options are updated for the restored state
-      chooseOption(1); // Replay the text associated with the restored state
+      chooseOption(lastOptionPicked); // Replay the text associated with the restored state
       return; // Exit function to avoid further processing
     }
   } else {
@@ -130,10 +133,11 @@ function chooseOption(option) {
         typeText(
           [
             "",
-            "14th May 1982",
-            "You are Andrei Berezkinov, a Soviet cosmonaut. \n\nAlong with your crewmate, Valente Lebedevsky, you are part of the first team to man the Soviet space station...",
+            "16th May 1982",
+            "You are Andrei Berezkinov, a Soviet cosmonaut.",
+            "Along with your crewmate, Valente Lebedevsky, you are the first team to man the Soviet space station...",
           ],
-          [2500, 2000, 3000],
+          [3000, 3500, 3500, 4000],
           () => {
             typingSound.pause();
             typingSpeed = 0;
@@ -143,17 +147,18 @@ function chooseOption(option) {
               typingSpeed = 10;
               typeText(
                 [
+                  "",
                   "Your mission is to activate this new space station, conduct various biological studies, and use the station's instruments to observe astronomical phenomena.",
                   "Having docked with SALYUT-7 three days ago, on 13th May 1982, you and Lebedevsky have just finished bringing the station fully online, initializing its life support systems, communications, power systems, and scientific equipment.",
                   "You are now required to conduct a comprehensive series of inspections and checks to ensure that all systems are functioning correctly and that the station is ready for long-term habitation and operations.",
                   "Are you up to the job?",
                 ],
-                [3000, 3000, 3000, 2500],
+                [3000, 3500, 4000, 3500, 0],
                 () => {
                   gameState = 1;
+                  lastOptionPicked = 1;
                   updateOptions();
                   enable2();
-                  //enableButtons(); // Re-enable buttons after text is done
                 }
               );
             });
@@ -166,11 +171,23 @@ function chooseOption(option) {
       disableButtons(); // Ensure buttons are disabled
       if (option === 2) {
         changeBackground("images/inside.png");
-        typingSpeed = 50; // Set a reasonable typing speed
+        typingSpeed = 60; // Set a reasonable typing speed
         typeText(["wha r u gae?"], [0], () => {
-          gameState = 2;
-          updateOptions();
-          enableButtons(); // Re-enable buttons after text is done
+          //gameState = 2;
+          //lastOptionPicked = 2;
+          option2.innerText = "who says ahm gae?";
+          option2.onclick = function () {
+            disableButtons();
+            typeText(["you are gae"], [0], () => {
+              option2.innerText = "who sir are the gae?";
+              enable2();
+              option2.onclick = function () {
+                disableButtons();
+                typeText(["no it is you sah who ah the gae"], [0], () => {});
+              };
+            });
+          };
+          enable2(); // Re-enable buttons after text is done
         });
       }
       break;
@@ -249,6 +266,10 @@ function setFontSize(size) {
 
 function changeBackground(imageUrl) {
   document.body.style.backgroundImage = `url('${imageUrl}')`;
+  document.body.style.backgroundRepeat = "no-repeat";
+  document.body.style.backgroundPosition = "center center";
+  document.body.style.backgroundAttachment = "fixed";
+  document.body.style.backgroundSize = "auto"; // Set specific size
 }
 
 startButton.addEventListener("click", startGame);
