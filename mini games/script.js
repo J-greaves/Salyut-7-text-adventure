@@ -63,7 +63,7 @@ function updateGauge() {
 function getRandomPosition() {
   let newPosition;
   do {
-    newPosition = Math.floor(Math.random() * 120); // Random angle between 0 and 180 degrees
+    newPosition = Math.floor(Math.random() * 120); // Random angle between 0 and 120 degrees
   } while (isWithinRestrictedRange(newPosition));
   return newPosition;
 }
