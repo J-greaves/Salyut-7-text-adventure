@@ -9,7 +9,7 @@ const option4 = document.getElementById("option4");
 
 // Game state tracker
 
-let gameState = 1;
+let gameState = 0;
 let typingSpeed = 10;
 let previousGameState = null;
 let lastOptionPicked = 0;
@@ -17,11 +17,59 @@ let nameKnown = false;
 const inventory = [];
 let isTyping = false; // Flag to prevent interaction during typing
 
+//dialogue
+
+const dialogue = {
+  0: {
+    text: [
+      "Lebedevsky: Good morning, Andrei. Are you ready to start the air quality checks for today?",
+    ],
+    next: 1,
+    optionText1: "About that",
+    optionText2: "I can't wait! Let's get started!",
+    optionText3: "If we must.",
+  },
+  1: {
+    text: ["you are gae"],
+    next: 2,
+    optionText: "who sir are the gae?",
+  },
+  2: {
+    text: ["no it is you sah who ah the gae"],
+    next: null, // No more dialogue
+  },
+};
+
+let currentDialogue = 0;
+
+async function startDialogue(dialogueId) {
+  disableButtons();
+  const dialogueNode = dialogue[dialogueId];
+
+  await typeText(dialogueNode.text, [0], () => {
+    gameState = 1;
+    lastOptionPicked = 1;
+    option1.innerText = dialogueNode.optionText1;
+    option2.innerText = dialogueNode.optionText2;
+    option3.innerText = dialogueNode.optionText3;
+    enableButtons();
+  });
+
+  if (dialogueNode.next !== null) {
+    option1.onclick = () => startDialogue(dialogueNode.next);
+    option2.onclick = () => startDialogue(dialogueNode.next);
+    option3.onclick = () => startDialogue(dialogueNode.next);
+  } else {
+    // End of dialogue, re-enable other options or proceed
+    enableButtons();
+  }
+}
+
 const spaceAmbientSound = new Audio(
   "sounds/spaceship-ambience-with-effects-21420.mp3"
 );
 const typingSound = new Audio("sounds/keyboard-typing-5997.mp3");
-typingSound.volume = 0.25; // Adjust volume if needed
+typingSound.volume = 0.25;
 const ominousTitle = new Audio("sounds/ominousTitle.mp3");
 ominousTitle.volume = 0.4;
 const ominousTitleTrail = new Audio("sounds/ominousTitleTrail.mp3");
@@ -32,8 +80,8 @@ const ominousTitleTrail2 = new Audio(
 ominousTitleTrail2.volume = 0.05;
 
 function startAmbience() {
-  spaceAmbientSound.loop = true; // Make the music loop
-  spaceAmbientSound.volume = 0.75; // Adjust volume if needed
+  spaceAmbientSound.loop = true;
+  spaceAmbientSound.volume = 0.75;
   spaceAmbientSound.play();
 }
 
@@ -41,7 +89,7 @@ function startGame() {
   startPage.style.display = "none";
   gamePage.style.display = "block"; // Show the game page
   startAmbience();
-  chooseOption(2); // Start the game by choosing the first option
+  chooseOption(1); // Start the game by choosing the first option
 }
 
 function typeText(sentences, delays, callback) {
@@ -144,7 +192,7 @@ function chooseOption(option) {
             setFontSize(60);
             typeText(["", "SALYUT-7"], [2000, 1000], () => {
               setFontSize(20);
-              typingSpeed = 10;
+              typingSpeed = 0;
               typeText(
                 [
                   "",
@@ -168,49 +216,374 @@ function chooseOption(option) {
       break;
 
     case 1:
-      disableButtons(); // Ensure buttons are disabled
+      typingSpeed = 70;
+      disableButtons();
+      changeBackground("images/inside.png");
       if (option === 2) {
-        changeBackground("images/inside.png");
-        typingSpeed = 60; // Set a reasonable typing speed
-        typeText(["wha r u gae?"], [0], () => {
-          //gameState = 2;
-          //lastOptionPicked = 2;
-          option2.innerText = "who says ahm gae?";
-          option2.onclick = function () {
-            disableButtons();
-            typeText(["you are gae"], [0], () => {
-              option2.innerText = "who sir are the gae?";
-              enable2();
-              option2.onclick = function () {
-                disableButtons();
-                typeText(["no it is you sah who ah the gae"], [0], () => {});
-              };
-            });
-          };
-          enable2(); // Re-enable buttons after text is done
-        });
+        typeText(
+          [
+            "Good morning, Andrei. Are you ready to start the air quality checks for today?",
+          ],
+          [1000],
+          () => {
+            moveOn(2, option);
+          }
+        );
       }
       break;
 
     case 2:
       disableButtons(); // Ensure buttons are disabled
       if (option === 1) {
-        typeText("You find a treasure chest!", () => {
-          gameState = 3; // Move to another state
-          updateOptions();
-          enableButtons(); // Re-enable buttons after text is done
+        typeText(
+          [
+            "Lebedevsky: Alright. Let's start with the oxygen levels. I'll check the readings from the Oxygen Generation System, you take a look at CO2 removal. Check the Lithium Hydroxide canisters, the Co2 levels, and the system logs, in that order.",
+            "Come and see me when you're done.",
+          ],
+          [2000],
+          () => {
+            moveOn(3, option);
+          }
+        );
+      } else if (option === 2) {
+        lastOptionPicked = 2;
+        typeText(
+          [
+            "Lebedevsky: Cool your jets, spaceman. We'll be here for a long enough. It's best not to rush things.",
+            "",
+            "Idle minds unravel fast up here.",
+          ],
+          [0, 2000],
+          () => {
+            moveOn(4, option);
+          }
+        );
+      } else {
+        typeText(
+          [
+            "Lebedevsky: What's the matter, comrade? Still struggling with the space sickness?",
+          ],
+          [],
+          () => {
+            moveOn(5, option);
+          }
+        );
+      }
+      break;
+
+    case 3:
+      disableButtons(); // Ensure buttons are disabled
+      if (option === 1) {
+        typeText([], [], () => {
+          moveOn();
         });
       } else if (option === 2) {
-        typeText("You encounter a strange figure.", () => {
-          gameState = 3; // Move to another state
-          updateOptions();
-          enableButtons(); // Re-enable buttons after text is done
+        lastOptionPicked = 2;
+        typeText([], [], () => {
+          moveOn();
         });
       } else {
-        typeText("You hear a growling sound from the shadows.", () => {
-          gameState = 3; // Move to another state
-          updateOptions();
-          enableButtons(); // Re-enable buttons after text is done
+        typeText([], [], () => {
+          moveOn();
+        });
+      }
+      break;
+
+    case 4:
+      disableButtons(); // Ensure buttons are disabled
+      if (option === 1) {
+        typeText(
+          [
+            "Lebedevsky: Exactly. We're the first crew to be stationed here. We need to make sure we look after the place.",
+            "Slow and steady, that's the pace up here. But look who I'm talking to. You've been with the agency for long enough.",
+            "What's it been, 10 years now?",
+          ],
+          [2000, 2000, 2000],
+          () => {
+            option1.innerText = "About that";
+            option2.innerText = "12 years";
+            option3.innerText = "*shrug*";
+            enableButtons();
+            option1.onclick = () =>
+              typeText(
+                [
+                  "Lebedevsky: Sounds about right. This might be your first trip to space, but you've been around long enough.",
+                  "Surely you've heard some of the stories from the other cosmonauts?",
+                ],
+                [0],
+                () => {
+                  option1.innerText = "You hear things";
+                  option2.innerText = "Not really";
+                  option3.innerText = "Of course, and don't call me Shirley!";
+                  enableButtons();
+                  option1.onclick = () =>
+                    typeText(
+                      [
+                        "Lebedevsky: Of course, we all do. You can't help but notice some cosmonauts come back...",
+                        "...different",
+                      ],
+                      [2000],
+                      () => {
+                        typeText(
+                          [
+                            "Lebedevsky: People think it's the silence of space that gets in your head, but that's not it.",
+                            "It's the noise.",
+                            "The constant, never ending hum of the station. The eternal hum and everything it means.",
+                            "It's the hum of the research instruments, of the life support systems, the oxygen generator and the carbon dioxide scrubbers.",
+                            "It's the hum that keeps you alive.",
+                            "And it's the hum that never let's you forget where you are.",
+                            "But I'm sure you'll adjust to life up here just fine.",
+                            "Anyway... ",
+                            "Let's start with the oxygen levels. I'll check the readings from the Oxygen Generation System, you take a look at CO2 removal. Check the Lithium Hydroxide canisters, the o2 levels, and the system logs, in that order",
+                          ],
+                          [2000, 2000, 2000, 2000, 2000, 2000, 2000],
+                          () => {}
+                        );
+                      }
+                    );
+                  option2.onclick = () =>
+                    typeText(
+                      [
+                        " Lebedevsky: I find that hard to believe, comrade. Stories travel fast on the ground, and everyone in the agency has observed some cosmonauts coming back...",
+                        "...different",
+                      ],
+                      [2000],
+                      () => {
+                        typeText(
+                          [
+                            "Lebedevsky: People think it's the silence of space that gets in your head, but that's not it.",
+                            "It's the noise.",
+                            "The constant, never ending hum of the station. The eternal hum and everything it means.",
+                            "It's the hum of the research instruments, of the life support systems, the oxygen generator and the carbon dioxide scrubbers.",
+                            "It's the hum that keeps you alive.",
+                            "And it's the hum that never let's you forget where you are.",
+                            "But I'm sure you'll adjust to life up here just fine.",
+                            "Anyway... ",
+                            "Let's start with the oxygen levels. I'll check the readings from the Oxygen Generation System, you take a look at CO2 removal. Check the Lithium Hydroxide canisters, the o2 levels, and the system logs, in that order",
+                          ],
+                          [2000, 2000, 2000, 2000, 2000, 2000, 2000],
+                          () => {}
+                        );
+                      }
+                    );
+                  option3.onclick = () =>
+                    typeText(
+                      [
+                        "Lebedevsky: Haha, good one comrade. But don't let ground control hear you referencing American movies!",
+                        "Joking aside, you must have noticed, on occasion, some cosmonauts come back a little...",
+                        "...different",
+                      ],
+                      [2000, 2000],
+                      () => {
+                        typeText(
+                          [
+                            "Lebedevsky: People think it's the silence of space that gets in your head, but that's not it.",
+                            "It's the noise.",
+                            "The constant, never ending hum of the station. The eternal hum and everything it means.",
+                            "It's the hum of the research instruments, of the life support systems, the oxygen generator and the carbon dioxide scrubbers.",
+                            "It's the hum that keeps you alive.",
+                            "And it's the hum that never let's you forget where you are.",
+                            "But I'm sure you'll adjust to life up here just fine.",
+                            "Anyway... ",
+                            "Let's start with the oxygen levels. I'll check the readings from the Oxygen Generation System, you take a look at CO2 removal. Check the Lithium Hydroxide canisters, the o2 levels, and the system logs, in that order",
+                          ],
+                          [2000, 2000, 2000, 2000, 2000, 2000, 2000],
+                          () => {}
+                        );
+                      }
+                    );
+                }
+              );
+            option2.onclick = () =>
+              typeText(
+                [
+                  "Lebedevsky: Sounds about right. This might be your first trip to space, but you've been around long enough.",
+                  "Surely you've heard some of the stories from the other cosmonauts?",
+                ],
+                [0],
+                () => {
+                  option1.innerText = "You hear things";
+                  option2.innerText = "Not really";
+                  option3.innerText = "Of course, and don't call me Shirley!";
+                  enableButtons();
+                  option1.onclick = () =>
+                    typeText(
+                      [
+                        "Lebedevsky: Of course, we all do. You can't help but notice some cosmonauts come back...",
+                        "...different",
+                      ],
+                      [2000],
+                      () => {
+                        typeText(
+                          [
+                            "Lebedevsky: People think it's the silence of space that gets in your head, but that's not it.",
+                            "It's the noise.",
+                            "The constant, never ending hum of the station. The eternal hum and everything it means.",
+                            "It's the hum of the research instruments, of the life support systems, the oxygen generator and the carbon dioxide scrubbers.",
+                            "It's the hum that keeps you alive.",
+                            "And it's the hum that never let's you forget where you are.",
+                            "But I'm sure you'll adjust to life up here just fine.",
+                            "Anyway... ",
+                            "Let's start with the oxygen levels. I'll check the readings from the Oxygen Generation System, you take a look at CO2 removal. Check the Lithium Hydroxide canisters, the o2 levels, and the system logs, in that order",
+                          ],
+                          [2000, 2000, 2000, 2000, 2000, 2000, 2000],
+                          () => {}
+                        );
+                      }
+                    );
+                  option2.onclick = () =>
+                    typeText(
+                      [
+                        " Lebedevsky: I find that hard to believe, comrade. Stories travel fast on the ground, and everyone in the agency has observed some cosmonauts coming back...",
+                        "...different",
+                      ],
+                      [2000],
+                      () => {
+                        typeText(
+                          [
+                            "Lebedevsky: People think it's the silence of space that gets in your head, but that's not it.",
+                            "It's the noise.",
+                            "The constant, never ending hum of the station. The eternal hum and everything it means.",
+                            "It's the hum of the research instruments, of the life support systems, the oxygen generator and the carbon dioxide scrubbers.",
+                            "It's the hum that keeps you alive.",
+                            "And it's the hum that never let's you forget where you are.",
+                            "But I'm sure you'll adjust to life up here just fine.",
+                            "Anyway... ",
+                            "Let's start with the oxygen levels. I'll check the readings from the Oxygen Generation System, you take a look at CO2 removal. Check the Lithium Hydroxide canisters, the o2 levels, and the system logs, in that order",
+                          ],
+                          [2000, 2000, 2000, 2000, 2000, 2000, 2000],
+                          () => {}
+                        );
+                      }
+                    );
+                  option3.onclick = () =>
+                    typeText(
+                      [
+                        "Lebedevsky: Haha, good one comrade. But don't let ground control hear you referencing American movies!",
+                        "Joking aside, you must have noticed, on occasion, some cosmonauts come back a little...",
+                        "...different",
+                      ],
+                      [2000, 2000],
+                      () => {
+                        typeText(
+                          [
+                            "Lebedevsky: People think it's the silence of space that gets in your head, but that's not it.",
+                            "It's the noise.",
+                            "The constant, never ending hum of the station. The eternal hum and everything it means.",
+                            "It's the hum of the research instruments, of the life support systems, the oxygen generator and the carbon dioxide scrubbers.",
+                            "It's the hum that keeps you alive.",
+                            "And it's the hum that never let's you forget where you are.",
+                            "But I'm sure you'll adjust to life up here just fine.",
+                            "Anyway... ",
+                            "Let's start with the oxygen levels. I'll check the readings from the Oxygen Generation System, you take a look at CO2 removal. Check the Lithium Hydroxide canisters, the o2 levels, and the system logs, in that order",
+                          ],
+                          [2000, 2000, 2000, 2000, 2000, 2000, 2000],
+                          () => {}
+                        );
+                      }
+                    );
+                }
+              );
+            option3.onclick = () =>
+              typeText(
+                [
+                  "Lebedevsky: Sounds about right. This might be your first trip to space, but you've been around long enough.",
+                  "Surely you've heard some of the stories from the other cosmonauts?",
+                ],
+                [0],
+                () => {
+                  option1.innerText = "You hear things";
+                  option2.innerText = "Not really";
+                  option3.innerText = "Of course, and don't call me Shirley!";
+                  enableButtons();
+                  option1.onclick = () =>
+                    typeText(
+                      [
+                        "Lebedevsky: Of course, we all do. You can't help but notice some cosmonauts come back...",
+                        "...different",
+                      ],
+                      [2000],
+                      () => {
+                        typeText(
+                          [
+                            "Lebedevsky: People think it's the silence of space that gets in your head, but that's not it.",
+                            "It's the noise.",
+                            "The constant, never ending hum of the station. The eternal hum and everything it means.",
+                            "It's the hum of the research instruments, of the life support systems, the oxygen generator and the carbon dioxide scrubbers.",
+                            "It's the hum that keeps you alive.",
+                            "And it's the hum that never let's you forget where you are.",
+                            "But I'm sure you'll adjust to life up here just fine.",
+                            "Anyway... ",
+                            "Let's start with the oxygen levels. I'll check the readings from the Oxygen Generation System, you take a look at CO2 removal. Check the Lithium Hydroxide canisters, the o2 levels, and the system logs, in that order",
+                          ],
+                          [2000, 2000, 2000, 2000, 2000, 2000, 2000],
+                          () => {}
+                        );
+                      }
+                    );
+                  option2.onclick = () =>
+                    typeText(
+                      [
+                        " Lebedevsky: I find that hard to believe, comrade. Stories travel fast on the ground, and everyone in the agency has observed some cosmonauts coming back...",
+                        "...different",
+                      ],
+                      [2000],
+                      () => {
+                        typeText(
+                          [
+                            "Lebedevsky: People think it's the silence of space that gets in your head, but that's not it.",
+                            "It's the noise.",
+                            "The constant, never ending hum of the station. The eternal hum and everything it means.",
+                            "It's the hum of the research instruments, of the life support systems, the oxygen generator and the carbon dioxide scrubbers.",
+                            "It's the hum that keeps you alive.",
+                            "And it's the hum that never let's you forget where you are.",
+                            "But I'm sure you'll adjust to life up here just fine.",
+                            "Anyway... ",
+                            "Let's start with the oxygen levels. I'll check the readings from the Oxygen Generation System, you take a look at CO2 removal. Check the Lithium Hydroxide canisters, the o2 levels, and the system logs, in that order",
+                          ],
+                          [2000, 2000, 2000, 2000, 2000, 2000, 2000],
+                          () => {}
+                        );
+                      }
+                    );
+                  option3.onclick = () =>
+                    typeText(
+                      [
+                        "Lebedevsky: Haha, good one comrade. But don't let ground control hear you referencing American movies!",
+                        "Joking aside, you must have noticed, on occasion, some cosmonauts come back a little...",
+                        "...different",
+                      ],
+                      [2000, 2000],
+                      () => {
+                        typeText(
+                          [
+                            "Lebedevsky: People think it's the silence of space that gets in your head, but that's not it.",
+                            "It's the noise.",
+                            "The constant, never ending hum of the station. The eternal hum and everything it means.",
+                            "It's the hum of the research instruments, of the life support systems, the oxygen generator and the carbon dioxide scrubbers.",
+                            "It's the hum that keeps you alive.",
+                            "And it's the hum that never let's you forget where you are.",
+                            "But I'm sure you'll adjust to life up here just fine.",
+                            "Anyway... ",
+                            "Let's start with the oxygen levels. I'll check the readings from the Oxygen Generation System, you take a look at CO2 removal. Check the Lithium Hydroxide canisters, the o2 levels, and the system logs, in that order",
+                          ],
+                          [2000, 2000, 2000, 2000, 2000, 2000, 2000],
+                          () => {}
+                        );
+                      }
+                    );
+                }
+              );
+          }
+        );
+      } else if (option === 2) {
+        lastOptionPicked = 2;
+        typeText([], [], () => {
+          moveOn();
+        });
+      } else {
+        typeText([], [], () => {
+          moveOn();
         });
       }
       break;
@@ -228,9 +601,24 @@ function updateOptions() {
       break;
 
     case 2:
-      option1.innerText = "Inspect the treasure";
-      option2.innerText = "Attack the figure";
-      option3.innerText = "Hide in the shadows";
+      option1.innerText = "Good morning, Valente. Of course, let's begin.";
+      option2.innerText = "I can't wait! Let's get started!";
+      option3.innerText = "If we must.";
+      break;
+
+    case 3:
+      option1.innerText = "state3";
+      option2.innerText = "state3";
+      option3.innerText = "state3";
+      break;
+
+    case 4:
+      option1.innerText =
+        "You're right. If there's one thing we have plenty of, it's time!";
+      option2.innerText =
+        "We have more than enough experiments to keep us occupied.";
+      option3.innerText =
+        "I am aware of the mental toll space travel can take.";
       break;
 
     // Add more updates as the game progresses
@@ -270,6 +658,13 @@ function changeBackground(imageUrl) {
   document.body.style.backgroundPosition = "center center";
   document.body.style.backgroundAttachment = "fixed";
   document.body.style.backgroundSize = "auto"; // Set specific size
+}
+
+function moveOn(newGameState, option) {
+  gameState = newGameState;
+  lastOptionPicked = option;
+  updateOptions();
+  enableButtons();
 }
 
 startButton.addEventListener("click", startGame);
