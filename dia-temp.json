@@ -1,0 +1,14 @@
+"options": {
+        "option1": {
+          "buttonText": "",
+          "nextState": 0
+        },
+        "option2": {
+          "buttonText": "",
+          "nextState": 0
+        },
+        "option3": {
+          "buttonText": "",
+          "nextState": 0
+        }
+      }

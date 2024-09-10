@@ -1,0 +1,194 @@
+{
+  "0": {
+    "2": {
+      "text": [
+        "",
+        "16th May 1982",
+        "You are Andrei Berezkinov, a Soviet cosmonaut.",
+        "Along with your crewmate, Valente Lebedevsky, you are the first team to man the Soviet space station...",
+        "SALYUT-7",
+        "Your mission is to activate this new space station, conduct various biological studies and use the station's instruments to observe astronomical phenomena.",
+        "Having docked with Salyut 3 days ago (13th May 1982), you and Lebedevsky have just finished bringing the stain fully online, initializing its life support systems, communications, power systems, and scientific equipment.",
+        "You are now required to conduct a comprehensive series of inspections and checks to ensure that all systems are functioning correctly and that the station is ready for long-term habitation and operations.",
+        "Are you up to the job?"
+      ],
+      "timings": [3000, 3500, 3500, 4000],
+      "options": {
+        "option1": {
+          "buttonText": "",
+          "nextState": 1
+        },
+        "option2": {
+          "buttonText": "Commencing Full Inspection",
+          "nextState": 1
+        },
+        "option3": {
+          "buttonText": "",
+          "nextState": 1
+        }
+      }
+    }
+  },
+  "1": {
+    "2": {
+      "text": [
+        "Good morning, Andrei. Are you ready to start the air quality checks for today?"
+      ],
+      "timings": [1000],
+      "options": {
+        "option1": {
+          "buttonText": "Good morning, Valente. Of course, let's begin.",
+          "nextState": 2
+        },
+        "option2": {
+          "buttonText": " I can't wait! Let's get started!",
+          "nextState": 2
+        },
+        "option3": {
+          "buttonText": "If we must.",
+          "nextState": 2
+        }
+      }
+    }
+  },
+  "2": {
+    "1": {
+      "text": [
+        "Lebedevsky: Alright. Let's start with the oxygen levels",
+        "Lebdevsky: I'll check the readings from the Oxygen Generation System, you take a look at CO2 removal.",
+        "Lebdevsky: Check the Lithium Hydroxide canisters, the Co2 levels, and the system logs, in that order.",
+        "Lebdevsky: Come and see me when you're done."
+      ],
+      "timings": [2000, 2000, 2000],
+      "options": {
+        "option1": {
+          "buttonText": "STATE3",
+          "nextState": 3
+        },
+        "option2": {
+          "buttonText": "STATE3",
+          "nextState": 3
+        },
+        "option3": {
+          "buttonText": "STATE3",
+          "nextState": 3
+        }
+      }
+    },
+    "2": {
+      "text": [
+        "Lebedevsky: Cool your jets, spaceman. We'll be here for long enough.",
+        "It's best not to rush things.",
+        "Idle minds unravel fast up here."
+      ],
+      "timings": [2000, 2000],
+      "options": {
+        "option1": {
+          "buttonText": "You're right. If there's one thing we have plenty of, it's time!",
+          "nextState": 4
+        },
+        "option2": {
+          "buttonText": "We have more than enough experiments to keep us occupied.",
+          "nextState": 4
+        },
+        "option3": {
+          "buttonText": "I am aware of the mental toll space travel can take.",
+          "nextState": 4
+        }
+      }
+    },
+    "3": {
+      "text": [
+        "Lebedevsky: What's the matter, comrade? Still struggling with the space sickness?"
+      ],
+      "timings": [2000],
+      "options": {
+        "option1": {
+          "buttonText": "I'll be fine.",
+          "nextState": 5
+        },
+        "option2": {
+          "buttonText": "No, no, just a little tired. I'm ready!",
+          "nextState": 5
+        },
+        "option3": {
+          "buttonText": "Nausea, headache, dizziness...",
+          "nextState": 5
+        }
+      }
+    }
+  },
+  "3": {},
+  "4": {
+    "1": {
+      "text": [
+        "Lebedevsky: Exactly. We're the first crew to be stationed here. We need to make sure we look after the place.",
+        "Slow and steady, that's the pace up here.",
+        "But look who I'm talking to. You've been with the agency for long enough.",
+        "What's it been, 10 years now?"
+      ],
+      "timings": [2000, 2000, 2000],
+      "options": {
+        "option1": {
+          "buttonText": "About that",
+          "nextState": 4.1
+        },
+        "option2": {
+          "buttonText": "12 years",
+          "nextState": 4.1
+        },
+        "option3": {
+          "buttonText": "*shrug*",
+          "nextState": 4.1
+        }
+      }
+    },
+    "2": {
+      "text": [
+        "Lebedevsky: You speak some truth there, comrade.",
+        "But before we even begin thinking about experiments we will have to check the ECLS, power systems, radio comms and data transmission, radiation shielding, back up systems...",
+        "The list goes on.",
+        "Slow and steady, that's the pace up here.",
+        "But look who I'm talking to. You've been with the agency for long enough.",
+        "What's it been, 10 years now?"
+      ],
+      "timings": [2000, 2000],
+      "options": {
+        "option1": {
+          "buttonText": "About that",
+          "nextState": 4.1
+        },
+        "option2": {
+          "buttonText": "12 years",
+          "nextState": 4.1
+        },
+        "option3": {
+          "buttonText": "*shrug*",
+          "nextState": 4.1
+        }
+      }
+    },
+    "3": {
+      "text": [
+        "Lebedevsky: No doubt you are, comrade. You've been with the agency for quite some time.",
+        "What's it been, 10 years now?"
+      ],
+      "timings": [2000],
+      "options": {
+        "option1": {
+          "buttonText": "About that",
+          "nextState": 4.1
+        },
+        "option2": {
+          "buttonText": "12 years",
+          "nextState": 4.1
+        },
+        "option3": {
+          "buttonText": "*shrug*",
+          "nextState": 4.1
+        }
+      }
+    }
+  },
+  "5": {}
+}
