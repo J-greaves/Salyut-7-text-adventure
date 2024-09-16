@@ -32,7 +32,7 @@
   "1": {
     "2": {
       "text": [
-        "Good morning, Andrei. Are you ready to start the air quality checks for today?"
+        "<span class='speaker'>Lebdevsky:<span> Good morning, Andrei. Are you ready to start the air quality checks for today?"
       ],
       "timings": [1000],
       "options": {

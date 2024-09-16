@@ -72,12 +72,17 @@ function typeText(sentences, delays) {
           textDisplay.appendChild(textElement); // Append the span to the text box
         }
 
-        textElement.textContent = ""; // Clear previous text
+        textElement.innerHTML = ""; // Clear previous text (use innerHTML now)
 
         let charIndex = 0;
+
         function typing() {
           if (charIndex < sentence.length) {
-            textElement.textContent += sentence.charAt(charIndex);
+            // Add HTML progressively while avoiding breaking HTML tags
+            // Use substr to gradually build the full string but keep existing innerHTML intact
+            const htmlSubstring = sentence.slice(0, charIndex + 1);
+            textElement.innerHTML = htmlSubstring; // Apply innerHTML to allow spans
+
             charIndex++;
             typingSound.play();
             setTimeout(typing, typingSpeed); // Adjust typing speed here
@@ -104,7 +109,7 @@ function typeText(sentences, delays) {
                 textElement.classList.add("fade-out-text");
 
                 setTimeout(() => {
-                  textElement.textContent = ""; // Clear the text after fade-out
+                  textElement.innerHTML = ""; // Clear the text after fade-out
                   textElement.classList.remove("fade-out-text"); // Remove fade-out class
                   setFontSize(20);
                   setTimeout(typeSentence, delay); // Proceed with the next sentence
@@ -127,6 +132,10 @@ function typeText(sentences, delays) {
 
 function chooseOption(option) {
   if (isTyping) return; // Prevent choice if typing is in progress
+
+  if (gameState > 0) {
+    changeBackground("images/inside.png");
+  }
 
   // Handle replay button logic
   if (option === 4) {
@@ -198,7 +207,7 @@ function handleClick(option) {
   gameState =
     gameScript[gameState][lastOptionPicked].options[`option${option}`]
       .nextState;
-  console.log(gameState);
+  console.log(gameState, previousGameState, lastOptionPicked);
   chooseOption(option);
 }
 
